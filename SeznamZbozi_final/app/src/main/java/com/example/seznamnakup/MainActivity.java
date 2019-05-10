@@ -32,6 +32,11 @@ public class MainActivity extends AppCompatActivity {
     Switch s;
     public List<Zbozi> zbozis = Singleton.getInstance().zbozis;
     ListView lv;
+    EditText pocet, cena;
+    Spinner spinner;
+    //pomocné proměnné mazat na urření pozice v listview a poziceSp ukládá pozici ve Spinneru
+    int mazat,poziceSp = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +57,11 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Zbozi z = zbozis.get(position);
                         PleniSpinn(z.getNazev());
-                        EditText pocet = findViewById(R.id.editText_pocet);
-                        EditText cena = findViewById(R.id.editText_cena);
+                        pocet = findViewById(R.id.editText_pocet);
+                        cena = findViewById(R.id.editText_cena);
                         pocet.setText(String.valueOf(z.getPocet()));
                         cena.setText(String.valueOf(z.getCena()));
-
+                        mazat = position;
                     }
                     Refresh();
                 } catch (Exception e) {
@@ -92,21 +97,28 @@ public class MainActivity extends AppCompatActivity {
         try {
             PleniSpinn();
             Refresh();
+        } catch (Exception ex) {
         }
-        catch (Exception ex) {}
     }
 
     //vložení položky do seznamu
     public void onClickPridej(View view) {
         try {
-            Spinner spinner = (Spinner) findViewById(R.id.spinner_items);
+            spinner = (Spinner) findViewById(R.id.spinner_items);
             String nazev = spinner.getSelectedItem().toString();
-            EditText pocet = findViewById(R.id.editText_pocet);
-            EditText cena = findViewById(R.id.editText_cena);
+            pocet = findViewById(R.id.editText_pocet);
+            cena = findViewById(R.id.editText_cena);
             if (nazev.length() != 0 && Float.parseFloat(pocet.getText().toString()) > 0 && Float.parseFloat(cena.getText().toString()) > 0) {
                 Zbozi tmp = new Zbozi(nazev, Float.parseFloat(cena.getText().toString()), Float.parseFloat(pocet.getText().toString()));
-                ListView lv = findViewById(R.id.listview_seznam);
+                lv = findViewById(R.id.listview_seznam);
                 zbozis.add(tmp);
+                if (mazat != -1 && spinner.getSelectedItemPosition()==poziceSp) {
+                    zbozis.remove(mazat);
+
+                }
+                poziceSp = mazat = -1;
+                pocet.setText("");
+                cena.setText("");
                 Refresh();
             } else {
                 Toast.makeText(this, "Všechny políčka musí být vyplněna a počty s cenou nenulové", Toast.LENGTH_LONG).show();
@@ -124,10 +136,6 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(arrayAdapter);
 
         TextView celkem = (TextView) findViewById(R.id.tv_CELKEM);
-        EditText pocet = findViewById(R.id.editText_pocet);
-        EditText cena = findViewById(R.id.editText_cena);
-        pocet.setText("");
-        cena.setText("");
         float tmp = (float) 0.0;
         //Float.parseFloat(celkem.getText().toString());
         for (Zbozi z : zbozis) {
@@ -136,12 +144,14 @@ public class MainActivity extends AppCompatActivity {
         celkem.setText("Celková cena nákupu je " + String.valueOf(tmp) + " Kč");
     }
 
-    Spinner spinner;
+    Cursor data;
+    List<String> listik;
+
     //Vložení dat do spinneru
     public void PleniSpinn() {
-        List<String> listik = new ArrayList<>();
+        listik = new ArrayList<>();
         mojeDb = new DatabaseHelper(this);
-        Cursor data = mojeDb.getListContents();
+        data = mojeDb.getListContents();
 
         if (data.getCount() == 0) {
             Toast.makeText(this, "prazdna db", Toast.LENGTH_LONG).show();
@@ -154,14 +164,14 @@ public class MainActivity extends AppCompatActivity {
                 spinner.setAdapter(spinAda);
             }
         }
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_items);
-        ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);
+        /*spinner = (Spinner) findViewById(R.id.spinner_items);
+        ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);*/
     }
 
     public void PleniSpinn(String najdi) {
-        List<String> listik = new ArrayList<>();
+        listik = new ArrayList<>();
         mojeDb = new DatabaseHelper(this);
-        Cursor data = mojeDb.getListContents();
+        data = mojeDb.getListContents();
 
         if (data.getCount() == 0) {
             Toast.makeText(this, "prazdna db", Toast.LENGTH_LONG).show();
@@ -173,13 +183,13 @@ public class MainActivity extends AppCompatActivity {
                 spinAda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinAda);
                 if (najdi != null) {
-                    int spinnerPosition = spinAda.getPosition(najdi);
+                    int spinnerPosition = poziceSp = spinAda.getPosition(najdi);
                     spinner.setSelection(spinnerPosition);
                 }
             }
         }
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_items);
-        ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);
+       /* spinner = (Spinner) findViewById(R.id.spinner_items);
+        ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);*/
     }
 
     //XML SOUBOR
@@ -210,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 case XmlPullParser.START_TAG:
                     eltName = parser.getName();
                     if ("zbozi".equals(eltName)) {
-                        tmpZbozi = new Zbozi("-", ((float)(-1.1)), ((float)(-1.1)));
+                        tmpZbozi = new Zbozi("-", ((float) (-1.1)), ((float) (-1.1)));
                         zbozis.add(tmpZbozi);
                     } else if (tmpZbozi != null) {
                         if ("nazev".equals(eltName)) {

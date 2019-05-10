@@ -72,6 +72,6 @@ boolean koupeno;
 
         return "nazev = " + nazev + "\n" +
                 "cena = " + cena +" Kč\n"+
-                "pocet = " + pocet + " ks\n"+ k ;
+                "pocet = " + pocet + " ks"/*+"\n" +k*/ ;
     }
 }
