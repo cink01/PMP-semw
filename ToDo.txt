@@ -1,4 +1,7 @@
-XML soubor při spuštění
-Uprava záznamů v seznamu
+XML soubor při spuštění finito
+
+todo
+
+Uprava záznamů v seznamu 
 Uprava a mazání z DB
 TAB PAGES?????

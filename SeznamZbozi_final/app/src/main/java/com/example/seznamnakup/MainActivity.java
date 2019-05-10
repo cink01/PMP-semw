@@ -28,7 +28,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    DatabaseHelper myDB;
+    DatabaseHelper mojeDb;
     Switch s;
     public List<Zbozi> zbozis = Singleton.getInstance().zbozis;
     ListView lv;
@@ -50,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
                     if (s.isChecked() == true) {
                         zbozis.remove(position);
                     } else {
+                        Zbozi z = zbozis.get(position);
+                        PleniSpinn(z.getNazev());
+                        EditText pocet = findViewById(R.id.editText_pocet);
+                        EditText cena = findViewById(R.id.editText_cena);
+                        pocet.setText(String.valueOf(z.getPocet()));
+                        cena.setText(String.valueOf(z.getCena()));
 
                     }
                     Refresh();
@@ -118,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(arrayAdapter);
 
         TextView celkem = (TextView) findViewById(R.id.tv_CELKEM);
+        EditText pocet = findViewById(R.id.editText_pocet);
+        EditText cena = findViewById(R.id.editText_cena);
+        pocet.setText("");
+        cena.setText("");
         float tmp = (float) 0.0;
         //Float.parseFloat(celkem.getText().toString());
         for (Zbozi z : zbozis) {
@@ -126,21 +136,46 @@ public class MainActivity extends AppCompatActivity {
         celkem.setText("Celková cena nákupu je " + String.valueOf(tmp) + " Kč");
     }
 
+    Spinner spinner;
     //Vložení dat do spinneru
     public void PleniSpinn() {
         List<String> listik = new ArrayList<>();
-        myDB = new DatabaseHelper(this);
-        Cursor data = myDB.getListContents();
+        mojeDb = new DatabaseHelper(this);
+        Cursor data = mojeDb.getListContents();
 
         if (data.getCount() == 0) {
             Toast.makeText(this, "prazdna db", Toast.LENGTH_LONG).show();
         } else {
             while (data.moveToNext()) {
                 listik.add(data.getString(1));
-                Spinner spinner = (Spinner) findViewById(R.id.spinner_items);
+                spinner = (Spinner) findViewById(R.id.spinner_items);
                 ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);
                 spinAda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinAda);
+            }
+        }
+        Spinner spinner = (Spinner) findViewById(R.id.spinner_items);
+        ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);
+    }
+
+    public void PleniSpinn(String najdi) {
+        List<String> listik = new ArrayList<>();
+        mojeDb = new DatabaseHelper(this);
+        Cursor data = mojeDb.getListContents();
+
+        if (data.getCount() == 0) {
+            Toast.makeText(this, "prazdna db", Toast.LENGTH_LONG).show();
+        } else {
+            while (data.moveToNext()) {
+                listik.add(data.getString(1));
+                spinner = (Spinner) findViewById(R.id.spinner_items);
+                ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);
+                spinAda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(spinAda);
+                if (najdi != null) {
+                    int spinnerPosition = spinAda.getPosition(najdi);
+                    spinner.setSelection(spinnerPosition);
+                }
             }
         }
         Spinner spinner = (Spinner) findViewById(R.id.spinner_items);
@@ -166,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void processParsing(XmlPullParser parser) throws IOException, XmlPullParserException {
         int eventType = parser.getEventType();
-        Zbozi curentZbozi = null;
+        Zbozi tmpZbozi = null;
 
         while (eventType != XmlPullParser.END_DOCUMENT) {
             String eltName = null;
@@ -175,15 +210,15 @@ public class MainActivity extends AppCompatActivity {
                 case XmlPullParser.START_TAG:
                     eltName = parser.getName();
                     if ("zbozi".equals(eltName)) {
-                        curentZbozi = new Zbozi("-", ((float)(-1.1)), ((float)(-1.1)));
-                        zbozis.add(curentZbozi);
-                    } else if (curentZbozi != null) {
+                        tmpZbozi = new Zbozi("-", ((float)(-1.1)), ((float)(-1.1)));
+                        zbozis.add(tmpZbozi);
+                    } else if (tmpZbozi != null) {
                         if ("nazev".equals(eltName)) {
-                            curentZbozi.setNazev(parser.nextText());
+                            tmpZbozi.setNazev(parser.nextText());
                         } else if ("cena".equals(eltName)) {
-                            curentZbozi.setCena(Float.parseFloat(parser.nextText()));
+                            tmpZbozi.setCena(Float.parseFloat(parser.nextText()));
                         } else if ("pocet".equals(eltName)) {
-                            curentZbozi.setPocet(Float.parseFloat(parser.nextText()));
+                            tmpZbozi.setPocet(Float.parseFloat(parser.nextText()));
                         }
                     }
                     break;
