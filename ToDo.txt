@@ -3,5 +3,6 @@ XML soubor při spuštění finito
 todo
 
 Uprava záznamů v seznamu 
+globalni proměnnou takže když se to vybere na úpravu tak se po přidání smaže předešlej prvek a pka se tato hodnota vrati zase na default(true, false atd)
 Uprava a mazání z DB
 TAB PAGES?????
