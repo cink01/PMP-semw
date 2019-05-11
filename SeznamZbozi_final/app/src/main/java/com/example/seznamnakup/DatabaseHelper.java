@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper    {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues= new ContentValues();
         contentValues.put(COL2, zbozi);
-        int result = db.insert(TABLE_NAME,null,contentValues);
+        long result = db.insert(TABLE_NAME,null,contentValues);
         if(result ==-1)
  		    return false;
         else 
@@ -45,20 +45,27 @@ public class DatabaseHelper extends SQLiteOpenHelper    {
         return db.rawQuery("SELECT * FROM "+ TABLE_NAME,null);
     }
 
-    public int updateZ(Zbozi z) {
+    public boolean updateZ(Item z) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues contentValues = new ContentValues();
-    contentValues.put(COL2, z.GetNazev());
-    // update row in table base on students.is value
-    return db.update(TABLE_NAME, contentValues, COL1 + " = ?",
-            new String[]{String.valueOf(z.GetId())});
+    contentValues.put(COL2, z.getNazev());
+        long result = db.update(TABLE_NAME, contentValues, COL1 + " = ?",new String[]{String.valueOf(z.getId())});
+        if(result ==-1)
+            return false;
+        else
+            return true;
     }
 
-    public void deleteZ(Zbozi z) {
-        // delete row in table based on id
+    public void deleteZ(Item z) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, COL1 + " = ?",
-                new String[]{String.valueOf(z.GetId())});
+                new String[]{String.valueOf(z.getId())});
     }
+/*
+    public void deleteZ(String nazev) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, COL2 + " = ?",
+                new String[]{String.valueOf(nazev)});
+    }*/
 
 }
