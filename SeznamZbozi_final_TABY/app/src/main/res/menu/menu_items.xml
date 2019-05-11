@@ -4,10 +4,10 @@
 
     <item
         android:id="@+id/Item1"
-        android:title="Testovací" />
+        android:title="Práce s Položkami(tabs)" />
     <item
         android:id="@+id/menu_pridat"
         android:onClick="onClickPridej"
-        android:title="Přidat položku"
+        android:title="Přidat položku(single)"
         />
 </menu>
