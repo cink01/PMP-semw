@@ -18,16 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tab1Fragment extends Fragment {
-    private static final String TAG = "Tab1Fragment";
 
-    EditText editText, CRUD;
-    DatabaseHelper myDB;
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab1_fragment,container,false);
         return view;
-
     }
 }

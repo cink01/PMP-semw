@@ -27,7 +27,6 @@ public class FinalAcitivity extends AppCompatActivity {
     DatabaseHelper myDB;
     Cursor data;
     List<Item> listik;
-    int poziceSp;
     Spinner spinner;
 
     @Override
@@ -48,64 +47,6 @@ public class FinalAcitivity extends AppCompatActivity {
         uprav = (ImageButton) findViewById(R.id.imageButton_edit);
         smaz = (ImageButton) findViewById(R.id.imageButton_delete);
         CRUD = (EditText) findViewById(R.id.et_CRUD);
-/*
-            uprav.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (z.getId() != -1) {
-                        boolean test = myDB.updateZ(new Item(z.getId(), CRUD.getText().toString()));
-                        if (test == true) {
-                            Toast.makeText(FinalAcitivity.this, "Updated Successfully!", Toast.LENGTH_SHORT).show();
-                            CRUD.setText("");
-                            z = new Item();
-                            PleniSpinn();
-                        } else
-                            Toast.makeText(FinalAcitivity.this, "Neprovedl se update", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(FinalAcitivity.this, "Položka neexistuje(nebyla vybraná žádná položka). Nelze upravit.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            smaz.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (z.getId() != -1) {
-                        myDB.deleteZ(z);
-                        Toast.makeText(FinalAcitivity.this, "Deleted Successfully!", Toast.LENGTH_SHORT).show();
-                        CRUD.setText("");
-                        z = new Item();
-                        PleniSpinn();
-                    } else {
-                        Toast.makeText(FinalAcitivity.this, "Položka neexistuje(nebyla vybraná žádná položka). Nelze smazat.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-        PleniSpinn();
-        try {
-            spinner = (Spinner) findViewById(R.id.spinner_CRUD);
-
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    Item tmp = (Item) spinner.getSelectedItem();
-                    for (Item i : listik) {
-                        if (i.getNazev() == tmp.getNazev()) {
-                            z.setId(i.getId());
-                            z.setNazev(i.getNazev());
-                            CRUD.setText(z.toString());
-                        }
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-        }
-        catch(Exception e){}*/
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -122,6 +63,7 @@ public class FinalAcitivity extends AppCompatActivity {
             if (editText.length() != 0) {
                 AddDat(newEntry);
                 editText.setText("");
+                z = new Item();
                 PleniSpinn();
             } else {
                 Toast.makeText(FinalAcitivity.this, "Musis neco zadat", Toast.LENGTH_LONG).show();
@@ -129,37 +71,6 @@ public class FinalAcitivity extends AppCompatActivity {
         } catch (Exception ex) {
             Toast.makeText(FinalAcitivity.this, "Položky nesmí být prázdné", Toast.LENGTH_LONG).show();
         }
-    }
-
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        spinner = (Spinner) findViewById(R.id.spinner_CRUD);
-        Item tmp = (Item) spinner.getSelectedItem();
-        for (Item i : listik) {
-            if (i.getNazev() == tmp.getNazev()) {
-                z.setId(i.getId());
-                z.setNazev(i.getNazev());
-                CRUD.setText(z.toString());
-            }
-        }
-    }
-
-    public void onClickEdit(View view) {
-        if (z.getId() != -1) {
-            boolean test = myDB.updateZ(new Item(z.getId(), CRUD.getText().toString()));
-            if (test == true) {
-                Toast.makeText(FinalAcitivity.this, "Updated Successfully!", Toast.LENGTH_SHORT).show();
-                CRUD.setText("");
-                z = new Item();
-                PleniSpinn();
-            } else
-                Toast.makeText(FinalAcitivity.this, "Neprovedl se update", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(FinalAcitivity.this, "Položka neexistuje(nebyla vybraná žádná položka). Nelze upravit.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void onClickSmaz(View view) {
-
     }
 
     public void AddDat(String newEntry) {
@@ -179,7 +90,6 @@ public class FinalAcitivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-
     public void PleniSpinn() {
         listik = new ArrayList<>();
         myDB = new DatabaseHelper(this);
@@ -194,30 +104,6 @@ public class FinalAcitivity extends AppCompatActivity {
 
                 spinAda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinAda);
-            }
-        }
-    }
-
-    public void PleniSpinn(Item najdi) {
-        listik = new ArrayList<>();
-        myDB = new DatabaseHelper(this);
-        data = myDB.getListContents();
-
-        if (data.getCount() == 0) {
-            Toast.makeText(this, "prazdna db", Toast.LENGTH_LONG).show();
-        } else {
-            while (data.moveToNext()) {
-                listik.add(new Item(data.getInt(0), data.getString(1)));
-                spinner = (Spinner) findViewById(R.id.spinner_CRUD);
-                ArrayAdapter<Item> spinAda = new ArrayAdapter<Item>(this, android.R.layout.simple_list_item_1, listik);
-
-                spinAda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(spinAda);
-
-                if (najdi != null) {
-                    int spinnerPosition = poziceSp = spinAda.getPosition(najdi);
-                    spinner.setSelection(spinnerPosition);
-                }
             }
         }
     }

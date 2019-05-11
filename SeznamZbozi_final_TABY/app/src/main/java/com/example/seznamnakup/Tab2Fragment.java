@@ -28,30 +28,18 @@ public class Tab2Fragment extends Fragment {
     DatabaseHelper myDB;
     Cursor data;
     List<Item> listik;
-    int poziceSp;
     Spinner spinner;
     View view;
 
-
     @Override
-    public void onResume() {
-        super.onResume();
-
-        z=new Item();
-        PleniSpinn();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.tab2_fragment, container, false);
-        z=new Item();
+        z = new Item();
         editText = (EditText) view.findViewById(R.id.editText_nazev_pridaniT);
         myDB = new DatabaseHelper(getActivity());
         uprav = (ImageButton) view.findViewById(R.id.imageButton_edit);
         smaz = (ImageButton) view.findViewById(R.id.imageButton_delete);
         CRUD = (EditText) view.findViewById(R.id.et_CRUD);
-      //  editText.setText("");
 
         uprav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,11 +87,12 @@ public class Tab2Fragment extends Fragment {
                         return;
                     }
                 }
+                PleniSpinn();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                PleniSpinn();
             }
         });
         PleniSpinn();
@@ -124,30 +113,6 @@ public class Tab2Fragment extends Fragment {
 
                 spinAda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinAda);
-            }
-        }
-    }
-
-    public void PleniSpinn(Item najdi) {
-        listik = new ArrayList<>();
-        myDB = new DatabaseHelper(getActivity());
-        data = myDB.getListContents();
-
-        if (data.getCount() == 0) {
-            Toast.makeText(getActivity(), "prazdna db", Toast.LENGTH_LONG).show();
-        } else {
-            while (data.moveToNext()) {
-                listik.add(new Item(data.getInt(0), data.getString(1)));
-                spinner = (Spinner) view.findViewById(R.id.spinner_CRUD);
-                ArrayAdapter<Item> spinAda = new ArrayAdapter<Item>(getActivity(), android.R.layout.simple_list_item_1, listik);
-
-                spinAda.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(spinAda);
-
-                if (najdi != null) {
-                    int spinnerPosition = poziceSp = spinAda.getPosition(najdi);
-                    spinner.setSelection(spinnerPosition);
-                }
             }
         }
     }

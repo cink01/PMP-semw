@@ -170,8 +170,6 @@ public class MainActivity extends AppCompatActivity {
                 spinner.setAdapter(spinAda);
             }
         }
-        /*spinner = (Spinner) findViewById(R.id.spinner_items);
-        ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);*/
     }
 
     public void PleniSpinn(String najdi) {
@@ -194,8 +192,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-       /* spinner = (Spinner) findViewById(R.id.spinner_items);
-        ArrayAdapter<String> spinAda = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listik);*/
     }
 
     //XML SOUBOR
