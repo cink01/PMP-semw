@@ -33,21 +33,32 @@ public class DatabaseHelper extends SQLiteOpenHelper    {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues= new ContentValues();
         contentValues.put(COL2, zbozi);
-
-        long result = db.insert(TABLE_NAME,null,contentValues);
-        if(result ==-1){
-            return false;
-        }
-        else {
+        int result = db.insert(TABLE_NAME,null,contentValues);
+        if(result ==-1)
+ 		    return false;
+        else 
             return true;
-        }
     }
 
     public Cursor getListContents(){
         SQLiteDatabase db = this.getWritableDatabase();
-        /*Cursor data = db.rawQuery("SELECT * FROM "+ TABLE_NAME,null);
-        return data;*/
         return db.rawQuery("SELECT * FROM "+ TABLE_NAME,null);
+    }
+
+    public int updateZ(Zbozi z) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(COL2, z.GetNazev());
+    // update row in table base on students.is value
+    return db.update(TABLE_NAME, contentValues, COL1 + " = ?",
+            new String[]{String.valueOf(z.GetId())});
+    }
+
+    public void deleteZ(Zbozi z) {
+        // delete row in table based on id
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, COL1 + " = ?",
+                new String[]{String.valueOf(z.GetId())});
     }
 
 }
