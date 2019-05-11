@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -68,12 +69,12 @@
                 android:layout_weight="1" />
 
             <ImageButton
-                android:id="@+id/bt_edit"
+                android:id="@+id/imageButton_edit"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:drawable/button_onoff_indicator_on"
-                android:foreground="@android:drawable/ic_menu_edit" />
+                android:onClick="onClickEdit"
+                app:srcCompat="@android:drawable/ic_menu_edit" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -81,12 +82,12 @@
                 android:layout_weight="1" />
 
             <ImageButton
-                android:id="@+id/bt_del"
+                android:id="@+id/imageButton_delete"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:drawable/button_onoff_indicator_off"
-                android:foreground="@android:drawable/ic_menu_delete" />
+                android:onClick="onClickSmaz"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
 
             <Space
                 android:layout_width="wrap_content"

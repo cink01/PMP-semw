@@ -22,8 +22,8 @@
                 android:text="Název" />
 
             <EditText
-                android:id="@+id/editText_nazev_pridani"
-                android:layout_width="274dp"
+                android:id="@+id/editText_nazev_pridaniT"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
@@ -42,12 +42,12 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/button_ok"
+                android:id="@+id/bt_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="onClickProvedPridani"
-                android:text="OK" />
+                android:onClick="onClickProvedPridaniT"
+                android:text="Uložit" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -55,12 +55,12 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/button_close"
+                android:id="@+id/bt_zavri"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="onClickUkonci"
-                android:text="Zavřit" />
+                android:text="Zavřít" />
 
             <Space
                 android:layout_width="wrap_content"
