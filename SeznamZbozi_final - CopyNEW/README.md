@@ -1,2 +1,0 @@
-# PMP
-ukoly předmětu PMP
