@@ -1,6 +1,7 @@
 package com.example.seznamnakup;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,25 +18,42 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper mojeDb;
     Switch s;
-    public List<Zbozi> zbozis = Singleton.getInstance().zbozis;
+    public List<Zbozi> zbozis;// = Singleton.getInstance().zbozis;
     ListView lv;
     EditText pocet, cena;
     Spinner spinner;
     //pomocné proměnné mazat na urření pozice v listview a poziceSp ukládá pozici ve Spinneru
-    int mazat,poziceSp = -1;
+    int mazat, poziceSp = -1;
 
 
     @Override
@@ -45,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
         PleniSpinn();
         lv = (ListView) findViewById(R.id.listview_seznam);
-        parseXML();
-
+      //  parseXML();
+        loadData();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -88,14 +106,48 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
-        if(id==R.id.Item1){
+        if (id == R.id.Item1) {
             Intent intent = new Intent(this, FinalAcitivity.class);
             startActivity(intent);
+           return true;
+        }
+        if (id == R.id.item_SAVE) {
+            saveData();
             return true;
-
+        }
+        if(id==R.id.item_xml)
+        {
+            parseXML();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(zbozis);
+        editor.putString("task list", json);
+        editor.apply();
+        Toast.makeText(this, "Ulozeno", Toast.LENGTH_LONG).show();
+    }
+
+    private void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("task list", null);
+        Type type = new TypeToken<ArrayList<Zbozi>>(){}.getType();
+        zbozis= gson.fromJson(json,type);
+        Toast.makeText(this, "Nacteno", Toast.LENGTH_LONG).show();
+        if(zbozis == null)
+        {
+            zbozis= new ArrayList<>();
+            Toast.makeText(this, "Prazny seznam", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
 
     @Override
     protected void onResume() {
@@ -118,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 Zbozi tmp = new Zbozi(nazev, Float.parseFloat(cena.getText().toString()), Float.parseFloat(pocet.getText().toString()));
                 lv = findViewById(R.id.listview_seznam);
                 zbozis.add(tmp);
-                if (mazat != -1 && spinner.getSelectedItemPosition()==poziceSp) {
+                if (mazat != -1 && spinner.getSelectedItemPosition() == poziceSp) {
                     zbozis.remove(mazat);
 
                 }
@@ -238,5 +290,39 @@ public class MainActivity extends AppCompatActivity {
             eventType = parser.next();
         }
         Refresh();
+    }
+
+    private void saveXML() {
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder;
+            dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.newDocument();
+
+            Element root = doc.createElement("zbozis");
+            for (int i = 0; i < zbozis.size(); i++) {
+                Element zbozi = doc.createElement("zbozi");
+                root.appendChild(zbozi);
+
+                Element nazev = doc.createElement("nazev");
+                nazev.appendChild(doc.createTextNode(zbozis.get(i).getNazev()));
+                zbozi.appendChild(nazev);
+
+                Element cena = doc.createElement("cena");
+                cena.appendChild(doc.createTextNode(String.valueOf(zbozis.get(i).getCena())));
+                zbozi.appendChild(cena);
+
+                Element pocet = doc.createElement("pocet");
+                pocet.appendChild(doc.createTextNode(String.valueOf(zbozis.get(i).getPocet())));
+                zbozi.appendChild(pocet);
+            }
+
+            //write the content into xml file
+            StreamResult file = new StreamResult(new File("zbozi.xml"));
+            Toast.makeText(this, "Ulozeno do XML", Toast.LENGTH_LONG).show();
+
+        } catch (ParserConfigurationException pce) {
+            pce.printStackTrace();
+        }
     }
 }
