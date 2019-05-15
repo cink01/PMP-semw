@@ -7,7 +7,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
-        versionName "1.1.1"
+        versionName "1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -19,7 +19,7 @@ android {
             variant ->
                 variant.outputs.each{
                     output->
-                        def name = "SeznamZboží_version${variant.versionName}{${variant.versionCode}}.apk"
+                        def name = "SeznamZboží_v${variant.versionName}.${variant.versionCode}.apk"
                         output.outputFileName=name
     	        }
         }
